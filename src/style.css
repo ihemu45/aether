@@ -1,0 +1,322 @@
+:root {
+  --bg: #12002a;
+  --magenta: #ff2e97;
+  --cyan: #05d9e8;
+  --amber: #ffd319;
+  --violet: #a45cff;
+
+  --text: #f4ecff;
+  --text-dim: #9a86c4;
+  --panel: rgba(28, 8, 54, 0.66);
+  --border: rgba(255, 255, 255, 0.10);
+
+  --font-display: 'Orbitron', sans-serif;
+  --font-sans: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'Share Tech Mono', ui-monospace, monospace;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background-color: var(--bg);
+  font-family: var(--font-sans);
+  color: var(--text);
+  user-select: none;
+  -webkit-font-smoothing: antialiased;
+}
+
+.font-mono { font-family: var(--font-mono); }
+
+/* ── Webcam backdrop (mirrored + dimmed) ───────────────────────────────── */
+#webcam {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: scaleX(-1);
+  filter: brightness(0.62) saturate(1.15) contrast(1.02);
+  z-index: 0;
+  background: var(--bg);
+}
+
+#stage {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+
+/* ── Top HUD ───────────────────────────────────────────────────────────── */
+#hud {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 2;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 18px 22px;
+  pointer-events: none;
+  transition: opacity 0.4s ease;
+}
+#hud.hidden { opacity: 0; }
+
+.hud-left { display: flex; flex-direction: column; line-height: 1; }
+.logo {
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: 22px;
+  letter-spacing: 0.32em;
+  color: var(--text);
+  text-shadow: 0 0 12px rgba(255, 46, 151, 0.7), 0 0 26px rgba(255, 46, 151, 0.35);
+}
+.logo-sub {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.28em;
+  color: var(--text-dim);
+  margin-top: 6px;
+  text-transform: uppercase;
+}
+
+.hud-right { text-align: right; display: flex; flex-direction: column; gap: 8px; align-items: flex-end; }
+
+#status-bar {
+  position: fixed;
+  bottom: 14px;
+  left: 18px;
+  z-index: 2;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  pointer-events: none;
+  transition: opacity 0.4s ease;
+}
+#status-bar.hidden { opacity: 0; }
+.now-playing {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 10px;
+  padding: 6px 14px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--panel);
+  backdrop-filter: blur(8px);
+}
+.np-label { color: var(--amber); font-size: 16px; }
+#hud-note {
+  font-size: 22px;
+  color: var(--amber);
+  letter-spacing: 0.06em;
+  text-shadow: 0 0 12px rgba(255, 211, 25, 0.55);
+  min-width: 48px;
+  display: inline-block;
+}
+.hud-meta { display: flex; gap: 12px; align-items: center; }
+.fps { font-size: 11px; color: var(--text-dim); letter-spacing: 0.1em; }
+
+.badge {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  padding: 4px 9px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+}
+.badge-loading { color: var(--amber); border-color: rgba(255, 211, 25, 0.4); }
+.badge-active  { color: var(--cyan); border-color: rgba(5, 217, 232, 0.5); box-shadow: 0 0 10px rgba(5, 217, 232, 0.25); }
+.badge-error   { color: var(--magenta); border-color: rgba(255, 46, 151, 0.6); }
+
+/* ── Modals ────────────────────────────────────────────────────────────── */
+.screen-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 5;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: radial-gradient(circle at 50% 40%, rgba(40, 6, 70, 0.72), rgba(8, 0, 20, 0.92));
+  backdrop-filter: blur(6px);
+}
+.screen-modal.active { display: flex; }
+
+.modal-content {
+  width: min(680px, 94vw);
+  max-height: 92vh;
+  overflow-y: auto;
+  text-align: center;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 22px;
+  padding: 38px 34px;
+  box-shadow: 0 0 60px rgba(255, 46, 151, 0.12), inset 0 0 40px rgba(164, 92, 255, 0.06);
+}
+
+.logo-xl {
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: clamp(40px, 8vw, 72px);
+  letter-spacing: 0.18em;
+  margin-bottom: 10px;
+}
+.glow-magenta { text-shadow: 0 0 16px rgba(255, 46, 151, 0.7), 0 0 38px rgba(255, 46, 151, 0.35); }
+
+.tagline {
+  color: var(--text-dim);
+  font-size: 16px;
+  margin-bottom: 26px;
+  font-weight: 300;
+}
+
+.instrument-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  margin-bottom: 22px;
+}
+.inst-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+/* Big neon tab pills, matching the in-studio THEREMIN / DRUMS / HARP tabs */
+.inst-tab {
+  width: 100%;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 16px;
+  letter-spacing: 0.06em;
+  text-align: center;
+  padding: 16px 8px;
+  border-radius: 14px;
+  border: 2px solid;
+  background: rgba(20, 4, 40, 0.5);
+}
+.tab-cyan {
+  color: var(--cyan);
+  border-color: var(--cyan);
+  text-shadow: 0 0 12px rgba(5, 217, 232, 0.6);
+  box-shadow: 0 0 18px rgba(5, 217, 232, 0.28), inset 0 0 16px rgba(5, 217, 232, 0.08);
+}
+.tab-magenta {
+  color: var(--magenta);
+  border-color: var(--magenta);
+  text-shadow: 0 0 12px rgba(255, 46, 151, 0.6);
+  box-shadow: 0 0 18px rgba(255, 46, 151, 0.28), inset 0 0 16px rgba(255, 46, 151, 0.08);
+}
+.tab-amber {
+  color: var(--amber);
+  border-color: var(--amber);
+  text-shadow: 0 0 12px rgba(255, 211, 25, 0.6);
+  box-shadow: 0 0 18px rgba(255, 211, 25, 0.28), inset 0 0 16px rgba(255, 211, 25, 0.08);
+}
+.inst-desc { font-size: 12.5px; color: var(--text-dim); line-height: 1.45; font-weight: 300; }
+
+.text-cyan { color: var(--cyan); }
+.text-magenta { color: var(--magenta); }
+.text-amber { color: var(--amber); }
+
+.hint {
+  font-size: 13.5px;
+  color: var(--text-dim);
+  margin-bottom: 24px;
+  line-height: 1.5;
+}
+.hint b { color: var(--text); font-weight: 600; }
+
+.section-label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  margin-bottom: 12px;
+}
+
+.controls {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 26px;
+}
+.controls-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 13.5px;
+  color: var(--text-dim);
+}
+.ctrl-text { font-weight: 300; }
+.ctrl-or { font-size: 12px; color: var(--text-dim); }
+.ctrl-chip {
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 3px 10px;
+  background: rgba(255, 255, 255, 0.03);
+}
+.ctrl-key {
+  font-family: var(--font-mono);
+  color: var(--cyan);
+  border: 1px solid rgba(5, 217, 232, 0.4);
+  border-radius: 6px;
+  padding: 2px 8px;
+  min-width: 22px;
+  text-align: center;
+  box-shadow: 0 0 8px rgba(5, 217, 232, 0.15);
+}
+
+.enter-btn {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 16px;
+  letter-spacing: 0.16em;
+  color: var(--bg);
+  background: linear-gradient(100deg, var(--magenta), var(--violet) 55%, var(--cyan));
+  border: none;
+  border-radius: 12px;
+  padding: 15px 38px;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.2s ease;
+  box-shadow: 0 0 26px rgba(255, 46, 151, 0.4);
+}
+.enter-btn:hover { transform: translateY(-2px) scale(1.02); box-shadow: 0 0 40px rgba(5, 217, 232, 0.5); }
+.enter-btn:active { transform: translateY(0) scale(0.99); }
+
+.micro { margin-top: 14px; font-size: 11.5px; color: var(--text-dim); font-weight: 300; }
+
+/* ── Error modal ───────────────────────────────────────────────────────── */
+.error-icon { font-size: 44px; margin-bottom: 8px; }
+.error-modal h2 { font-family: var(--font-display); letter-spacing: 0.12em; margin-bottom: 12px; }
+.error-desc { color: var(--text-dim); margin-bottom: 20px; line-height: 1.5; }
+.troubleshoot {
+  text-align: left;
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 16px 18px;
+  margin-bottom: 22px;
+}
+.troubleshoot h3 { font-size: 12px; letter-spacing: 0.12em; color: var(--text-dim); margin-bottom: 10px; text-transform: uppercase; }
+.troubleshoot ul { padding-left: 18px; }
+.troubleshoot li { font-size: 13px; color: var(--text-dim); margin-bottom: 7px; line-height: 1.45; }
+
+@media (max-width: 560px) {
+  .instrument-grid { grid-template-columns: 1fr; }
+  .modal-content { padding: 28px 20px; }
+}

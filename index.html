@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Aether — Gesture-Controlled Air Instrument Studio</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Outfit:wght@300;400;600&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+  </head>
+  <body>
+    <!-- Live webcam, mirrored + dimmed, fills the viewport as a backdrop -->
+    <video id="webcam" autoplay playsinline muted></video>
+
+    <!-- Instrument + UI canvas, drawn on top of the webcam -->
+    <canvas id="stage"></canvas>
+
+    <!-- Top HUD -->
+    <header id="hud" class="hidden">
+      <div class="hud-left">
+        <span class="logo">AETHER</span>
+        <span class="logo-sub">air instrument studio</span>
+      </div>
+      <div class="hud-right font-mono">
+        <div class="now-playing">
+          <span class="np-label">♪</span>
+          <span id="hud-note">—</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Tracking status + FPS, tucked in the bottom-right out of the tab band -->
+    <div id="status-bar" class="hidden font-mono">
+      <span id="tracking-badge" class="badge badge-loading">LOADING AI</span>
+      <span class="fps">FPS <span id="hud-fps">00</span> / TRK <span id="hud-track-fps">00</span></span>
+    </div>
+
+    <!-- Start screen -->
+    <div id="start-screen" class="screen-modal active">
+      <div class="modal-content">
+        <h1 class="logo-xl glow-magenta">AETHER</h1>
+        <p class="tagline">Play instruments out of thin air — just your hands and a webcam.</p>
+
+        <div class="section-label">How to play</div>
+        <div class="instrument-grid">
+          <div class="inst-card">
+            <div class="inst-tab tab-cyan">🎶 THEREMIN</div>
+            <span class="inst-desc">Right hand sets pitch, left hand sets volume. Wave your hands in the air.</span>
+          </div>
+          <div class="inst-card">
+            <div class="inst-tab tab-magenta">🥁 AIR DRUMS</div>
+            <span class="inst-desc">Strike the floating pads with a quick downward motion. Two hands.</span>
+          </div>
+          <div class="inst-card">
+            <div class="inst-tab tab-amber">🎼 AIR HARP</div>
+            <span class="inst-desc">Sweep across the glowing strings to pluck. Always in key.</span>
+          </div>
+        </div>
+
+        <div class="section-label">Controls — everything is hands-free</div>
+        <div class="controls">
+          <div class="controls-row">
+            <span class="ctrl-text">Switch instruments —</span>
+            <span class="ctrl-chip">✋ hold a hand over a tab</span>
+            <span class="ctrl-or">or press</span>
+            <span class="ctrl-key">1</span><span class="ctrl-key">2</span><span class="ctrl-key">3</span>
+          </div>
+          <div class="controls-row">
+            <span class="ctrl-text">Theremin extras —</span>
+            <span class="ctrl-key">S</span><span class="ctrl-text">snap-to-key</span>
+            <span class="ctrl-key">W</span><span class="ctrl-text">waveform</span>
+          </div>
+        </div>
+
+        <button id="enter-btn" class="enter-btn">ENTER THE STUDIO</button>
+        <p class="micro">Needs camera + audio permission. Everything runs locally in your browser.</p>
+      </div>
+    </div>
+
+    <!-- Error fallback -->
+    <div id="error-fallback" class="screen-modal error-modal">
+      <div class="modal-content">
+        <div class="error-icon">⚠️</div>
+        <h2 class="text-magenta">CAMERA REQUIRED</h2>
+        <p id="error-message" class="error-desc">We need camera access to track your hands. Please allow camera permissions and refresh.</p>
+        <div class="troubleshoot">
+          <h3>Troubleshooting</h3>
+          <ul>
+            <li>Click the camera icon in your browser's address bar to grant access.</li>
+            <li>Make sure no other app (Zoom, Teams, Photo Booth) is using the webcam.</li>
+            <li>Reload the tab to retry initialization.</li>
+          </ul>
+        </div>
+        <button class="enter-btn" onclick="window.location.reload()">REFRESH PAGE</button>
+      </div>
+    </div>
+
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
